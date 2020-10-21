@@ -24,6 +24,7 @@ class Snake {
   float speed{0.1f};
   int size{1};
   bool alive{true};
+  bool moved{true}; // boolean indicating if snake has moved since last direction change
   float head_x;
   float head_y;
   std::vector<SDL_Point> body;
