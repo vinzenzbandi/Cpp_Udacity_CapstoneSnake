@@ -18,7 +18,7 @@ class Game {
 
  private:
   Snake snake;
-  Food food;
+  vector<Food> foods = vector<Food>(2);
 
   std::random_device dev;
   std::mt19937 engine;
@@ -27,7 +27,7 @@ class Game {
 
   int score{0};
 
-  void PlaceFood();
+  void PlaceFood(Food &food);
   void Update();
 };
 

@@ -16,12 +16,18 @@ public:
 
     // methods
     SDL_Point getPos() const;
-    void setPos(int x, int y);
+    bool isSuper() const;
+    bool isPoison() const;
+    bool isNormal() const;
     type getType() const;
+
+    void setPos(int x, int y);
+    void updateType();
     
 
 private:
     type _foodtype;
+    bool _random; // if true food type is random
     SDL_Point _position; // where the food is placed
 };
 

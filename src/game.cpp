@@ -7,7 +7,10 @@ Game::Game(std::size_t grid_width, std::size_t grid_height)
       engine(dev()),
       random_w(0, static_cast<int>(grid_width)-1 ),
       random_h(0, static_cast<int>(grid_height)-1 ) {
-  PlaceFood();
+  foods.at(0) = Food(Food::normal);
+  foods.at(1) = Food();
+  PlaceFood(foods.at(0));
+  PlaceFood(foods.at(1));
 }
 
 void Game::Run(Controller const &controller, Renderer &renderer,
@@ -25,7 +28,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     // Input, Update, Render - the main game loop.
     controller.HandleInput(running, snake);
     Update();
-    renderer.Render(snake, food);
+    renderer.Render(snake, foods);
 
     frame_end = SDL_GetTicks();
 
@@ -50,7 +53,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   }
 }
 
-void Game::PlaceFood() {
+void Game::PlaceFood( Food &food ) {
   int x, y;
   while (true) {
     x = random_w(engine);
@@ -59,6 +62,7 @@ void Game::PlaceFood() {
     // food.
     if (!snake.SnakeCell(x, y)) {
       food.setPos(x,y);
+      food.updateType();
       return;
     }
   }
@@ -72,14 +76,33 @@ void Game::Update() {
   int new_x = static_cast<int>(snake.head_x);
   int new_y = static_cast<int>(snake.head_y);
 
-  // Check if there's food over here
-  if (food.getPos().x == new_x && food.getPos().y == new_y) {
-    score++;
-    PlaceFood();
-    // Grow snake and increase speed.
-    snake.GrowBody();
-    snake.speed += 0.02;
+  for(Food &food : foods)
+  {
+    // Check if there's food over here
+    if (food.getPos().x == new_x && food.getPos().y == new_y) 
+    {
+      // increase score and grow body according to food type
+      if (food.isNormal())
+      {
+        score++;
+        snake.GrowBody();
+      }
+      else if(food.isSuper())
+      {
+        score += 2;
+      }
+      else
+      {
+        score --;
+        snake.GrowBody();
+      }
+      
+      // Grow snake and place new food.
+      PlaceFood(food);
+      snake.speed += 0.01;
+    }
   }
+
 }
 
 int Game::GetScore() const { return score; }
