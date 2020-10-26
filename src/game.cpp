@@ -7,10 +7,9 @@ Game::Game(std::size_t grid_width, std::size_t grid_height)
       engine(dev()),
       random_w(0, static_cast<int>(grid_width)-1 ),
       random_h(0, static_cast<int>(grid_height)-1 ) {
-  foods.at(0) = Food(Food::normal);
-  foods.at(1) = Food();
+  foods.emplace_back(move(Food(Food::normal)));
+  foods.emplace_back(move(Food()));
   PlaceFood(foods.at(0));
-  PlaceFood(foods.at(1));
 }
 
 void Game::Run(Controller const &controller, Renderer &renderer,
@@ -19,6 +18,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   Uint32 frame_start;
   Uint32 frame_end;
   Uint32 frame_duration;
+  Uint32 food_timestamp = SDL_GetTicks();
   int frame_count = 0;
   bool running = true;
 
@@ -50,6 +50,13 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     if (frame_duration < target_frame_duration) {
       SDL_Delay(target_frame_duration - frame_duration);
     }
+
+    // every 20 seconds place a random food
+    if (frame_end - food_timestamp >= 20000)
+    {
+      PlaceFood(foods.at(1));
+      food_timestamp = frame_end;
+    }
   }
 }
 
@@ -79,7 +86,7 @@ void Game::Update() {
   for(Food &food : foods)
   {
     // Check if there's food over here
-    if (food.getPos().x == new_x && food.getPos().y == new_y) 
+    if (food.getPos().x == new_x && food.getPos().y == new_y && food.isActive()) 
     {
       // increase score and grow body according to food type
       if (food.isNormal())

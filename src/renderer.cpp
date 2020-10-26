@@ -90,16 +90,23 @@ void Renderer::RenderFood(vector<Food> const &foods)
 
   for (Food const &food : foods)
   {
-    switch( food.getType() )
+    if(food.isVisible())
     {
-      case Food::normal:
-        renderColor = YELLOW;
-        break;
-      case Food::super:
-        renderColor = RED;
-        break;
-      case Food::poison:
-        renderColor = GREEN;
+      switch( food.getType() )
+      {
+        case Food::normal:
+          renderColor = YELLOW;
+         break;
+        case Food::super:
+          renderColor = RED;
+          break;
+        case Food::poison:
+          renderColor = GREEN;
+      }
+    }
+    else
+    {
+      renderColor = BLACK;
     }
     SDL_SetRenderDrawColor(sdl_renderer, renderColor.r, renderColor.g, renderColor.b, 0xFF);
     SDL_Point foodPos =  food.getPos();
