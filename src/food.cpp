@@ -9,15 +9,15 @@ Food::Food()
 {
     updateType();
     _random = true;
-    _active = false;
-    _visible = false;
+    setActive(false);
+    setVisible(false);
 }
 
 Food::Food(type t) : _foodtype(t)
 {
     _random = false;
-    _active = true;
-    _visible = true;
+    setActive(true);
+    setVisible(true);
 }
 
 // move constructor
@@ -138,7 +138,7 @@ void Food::setPos(int x, int y)
         _position.y = y;
         setActive(true);
         setVisible(true);
-        if(_random)
+        if(_random) // start deactivatio timer tread if food is random
         {
             thread deactivation(&Food::DeactivationTimer, this);
             deactivation.detach();
@@ -149,21 +149,19 @@ void Food::setPos(int x, int y)
 
 void Food::updateType()
 {
+    // assigns a new food type if the _random variable is set to true.
     if (_random)
     {
         srand (time(NULL));
         switch (rand() % 3)
         {
             case 0: 
-                cout << "normal" << endl;
                 _foodtype = normal;
                 break;
             case 1: 
-                cout << "super" << endl;
                 _foodtype = super;
                 break;
             case 2: 
-                cout << "poison" << endl;
                 _foodtype = poison;
                 break;
         }
@@ -172,6 +170,7 @@ void Food::updateType()
 
 void Food::DeactivationTimer()
 {
+    // starts a timer that "deactivates" the food after a certain time
     this_thread::sleep_for(chrono::seconds(4));
     if (isActive())
     {
@@ -188,9 +187,10 @@ void Food::DeactivationTimer()
 
 void Food::FlashingTimer()
 {
-    while (_flashing && _active)
+    // toggels visibility if the flashing option is set. 
+    while (isFlashing() && isActive())
     {
-        _visible = !_visible;
+        setVisible(!isVisible());
         this_thread::sleep_for(chrono::milliseconds(250));
     }
 }

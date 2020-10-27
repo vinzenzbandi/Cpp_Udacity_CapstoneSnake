@@ -114,7 +114,6 @@ void Renderer::RenderFood(vector<Food> const &foods)
     block.y = foodPos.y * block.h;
     SDL_RenderFillRect(sdl_renderer, &block);
   }
-  // Render food
 }
 
 void Renderer::UpdateWindowTitle(int score, int fps) {
