@@ -88,24 +88,56 @@ bool Food::isNormal() const { return (_foodtype == normal); }
 bool Food::isSuper() const { return (_foodtype == super); }
 Food::type Food::getType() const {return _foodtype;}
 
-bool Food::isActive() const {return _active;}
-bool Food::isVisible() const {return _visible;}
+bool Food::isActive() const 
+{
+    lock_guard<mutex> lock(_mtx);
+    return _active;
+}
+
+bool Food::isVisible() const 
+{
+    lock_guard<mutex> lock(_mtx);
+    return _visible;
+}
+
+bool Food::isFlashing() const 
+{
+    lock_guard<mutex> lock(_mtx);
+    return _flashing;
+}
 
 // setters
+void Food::setActive(bool state)
+{
+    lock_guard<mutex> lock(_mtx);
+    _active = state;
+}
+
+void Food::setVisible(bool state)
+{
+    lock_guard<mutex> lock(_mtx);
+    _visible = state;
+}
+
+void Food::setFlashing(bool state)
+{
+    lock_guard<mutex> lock(_mtx);
+    _flashing = state;
+}
+
 void Food::setPos(int x, int y)
 {
-    //mtx.lock()
-    if (_active && _random) // random foods don't get replaced when "eaten"
+    if (isActive() && _random) // random foods don't get replaced when "eaten"
     {
-        _active = false;
-        _visible = false;
+        setActive(false);
+        setVisible(false);
     }
     else
     {
         _position.x = x;
         _position.y = y;
-        _active = true;
-        _visible = true;
+        setActive(true);
+        setVisible(true);
         if(_random)
         {
             thread deactivation(&Food::DeactivationTimer, this);
@@ -113,7 +145,6 @@ void Food::setPos(int x, int y)
         }
 
     }
-    //mtx.unlock();
 }
 
 void Food::updateType()
@@ -142,19 +173,17 @@ void Food::updateType()
 void Food::DeactivationTimer()
 {
     this_thread::sleep_for(chrono::seconds(4));
-    //mtx.lcok();
-    if (this->isActive())
+    if (isActive())
     {
-        _flashing = true;
+        setFlashing(true);
         thread flash(&Food::FlashingTimer, this);
         flash.detach();
         //mtx.unlcok();
         this_thread::sleep_for(chrono::seconds(4));
     }
-    _active = false;
-    _visible = false;
-    _flashing = false;
-    //mtx.unlock();
+    setActive(false);
+    setVisible(false);
+    setFlashing(false);
 }
 
 void Food::FlashingTimer()

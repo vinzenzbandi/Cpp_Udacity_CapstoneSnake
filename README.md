@@ -1,12 +1,23 @@
-# CPPND: Capstone Snake Game Example
+# CPPND: Capstone Snake Game Submission
 
-This is a starter repo for the Capstone project in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). The code for this repo was inspired by [this](https://codereview.stackexchange.com/questions/212296/snake-game-in-c-with-sdl) excellent StackOverflow post and set of responses.
+This is my Capstone project in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). The code is based on [this](https://github.com/udacity/CppND-Capstone-Snake-Game) github repository, whick was inspired by [this](https://codereview.stackexchange.com/questions/212296/snake-game-in-c-with-sdl) excellent StackOverflow post and set of responses.
 
 <img src="snake_game.gif"/>
 
-The Capstone Project gives you a chance to integrate what you've learned throughout this program. This project will become an important part of your portfolio to share with current and future colleagues and employers.
+## Description
+New feature was added that puts an additional food item on the field. A new food appears every 20 seconds, starts flashing after 5 seconds and disappears after 10 seconds. The additional food randomly has different properties (Normal, Superfood, Poison).
 
-In this project, you can build your own C++ application or extend this Snake game, following the principles you have learned throughout this Nanodegree Program. This project will demonstrate that you can independently create applications using a wide range of C++ features.
+### Food Properties
+* Normal (yellow): Score +1 when eaten, snake grows 1 tile
+* Superfood (red): Score +2 when eaten, snake does not grow
+* Poison (green): Score -1 when eaten, snake grows 1 tile
+
+## Bug Fixes
+### Snake can no longer turn back on itself
+When two inputs were entered in quick succession it was possible that the snake made a 180 degree turn and died. This was fixed by ignoring inputs until the snake has moved at least one tile. 
+### Food could wpawn outside the play field
+There was a chance that a food spawned outside the play area because the random number generator was initialized incorrectly. 
+
 
 ## Dependencies for Running Locally
 * cmake >= 3.7

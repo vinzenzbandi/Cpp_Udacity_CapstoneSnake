@@ -48,6 +48,11 @@ private:
 
     void DeactivationTimer();
     void FlashingTimer();
+    bool isFlashing() const;
+
+    void setActive(bool state);
+    void setVisible(bool state);
+    void setFlashing(bool state);
 
 };
 
